@@ -4,12 +4,13 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
 from reportlab.lib.styles import getSampleStyleSheet
 import io
 import pdfplumber
-import os
 from langchain_experimental.agents import create_csv_agent
-from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_openai import AzureOpenAI
 import markdown2
- 
-os.environ["GEMINI-API-KEY"] = "YOUR_API_KEY"
+from dotenv import load_dotenv
+
+load_dotenv()
+deployment_name = "gpt-35-turbo-instruct"
  
 if 'file_uploaded' not in st.session_state:
     st.session_state.file_uploaded = False
@@ -21,11 +22,10 @@ def upload_csv():
         st.session_state.file_uploaded = True
  
 def create_agent():
-    llm = ChatGoogleGenerativeAI(
-        model="gemini-pro",
-        verbose=True,
-        temperature=0,
-        google_api_key=os.environ.get("GEMINI-API-KEY")
+    llm = AzureOpenAI(
+        deployment_name=deployment_name,
+        verbose= True,
+        temperature= 0
     )
     st.session_state.agent = create_csv_agent(llm, st.session_state.file,  verbose=True, allow_dangerous_code=True)
  
@@ -34,7 +34,7 @@ def add_lines_to_pdf(elements):
     completed_count = 0
     agent = st.session_state.agent
     queries = [
-        "give detailed 50 lines summary of csv in marketing analysis in markdown format?",
+        "give detailed 50 lines summary of csv in marketing analysis?",
         # "predict which video will have highest likes in one month and how much it will be give its name"
     ]
     while max_attempts > 0 and completed_count != len(queries):

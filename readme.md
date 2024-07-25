@@ -12,3 +12,4 @@
 - langchain_google_genai
 - statsmodels
 - streamlit
+- python-dotenv
