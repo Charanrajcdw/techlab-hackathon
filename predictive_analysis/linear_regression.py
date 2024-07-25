@@ -1,49 +1,48 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score, accuracy_score
 from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.preprocessing import OneHotEncoder
+from scipy.sparse import hstack
 
 
-def predictEng(df):
-    # Load data
-    data = df['Corp Facebook']
+def predictEng(data):
+    df = data['Corp Facebook']
+    print(df.head())
 
-    # Display the first few rows
-    print(data.head())
+    # One-hot encode categorical features
+    categorical_features = ['Account', 'Channel', 'Media Type']
+    encoder = OneHotEncoder(sparse_output=False)
+    encoded_features = encoder.fit_transform(df[categorical_features])
 
-
-
-
-    # Vectorize the post text
+    # Vectorize text features
     vectorizer = CountVectorizer(max_features=1000)
-    X_text = vectorizer.fit_transform(data['Post Text']).toarray()
+    title_vectorized = vectorizer.fit_transform(df['Post Title'])
+    text_vectorized = vectorizer.fit_transform(df['Post Text'])
+    labels_vectorized = vectorizer.fit_transform(df['Labels'])
 
-    # Combine text features with numerical features
-    X = pd.concat([pd.DataFrame(X_text), data[['Media Type', 'Facebook - Post Shares', 'Labels', 'Facebook - Post Impressions - Organic', 'Post Link Shortener Clicks']]], axis=1)
-    
-    # Ensure all column names are strings
-    X.columns = X.columns.astype(str)       
-    y = data['wENG']
+    # Combine all features into a single feature set
+    X = hstack((encoded_features, title_vectorized, text_vectorized, labels_vectorized, df[['Facebook - Post Comments', 'Facebook - Post Impressions - Organic', 'Facebook - Post Reactions', 'Facebook - Post Shares', 'Facebook - Post Video Views 3s - Organic', 'Post Link Shortener Clicks', 'ENG']]))
 
-
-
+    # Target variable
+    y = df['wENG']
+        
     # Split the data into training and testing sets
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-    # Initialize and train the model
+    # Train a linear regression model
     model = LinearRegression()
     model.fit(X_train, y_train)
 
-    # Make predictions
+    # Evaluate the model
     y_pred = model.predict(X_test)
-
-    print(y_pred)
-
-    # Calculate evaluation metrics
+    mae = mean_absolute_error(y_test, y_pred)
     mse = mean_squared_error(y_test, y_pred)
     r2 = r2_score(y_test, y_pred)
-
-    print(f'Mean Squared Error: {mse}')
-    print(f'R^2 Score: {r2}')
+    accuracy = accuracy_score(y_test, y_pred)
+    print("Mean Absolute Error:", mae)
+    print("Mean Squared Error:", mse)
+    print("R-squared:", r2)
+    print("Accuracy:",accuracy)
 
