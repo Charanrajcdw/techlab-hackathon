@@ -22,8 +22,7 @@ def calculate_stats(df):
 
 
 # Function to calculate statistics and format them into a table
-def overallStatsTable(dataframe):
-    df = dataframe
+def overallStatsTable(df):
     # From the first spreadsheet
     # df = list(dataframes.values())[0]
     
