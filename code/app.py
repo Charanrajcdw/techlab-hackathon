@@ -2,8 +2,9 @@ import streamlit as st
 import io
 import markdown2
 from dotenv import load_dotenv
-from code import *
-
+from utils import *
+from descriptive_analysis import *
+from predictive_analysis import *
 
 load_dotenv()
  
@@ -15,17 +16,24 @@ def upload_csv():
     if file is not None:
         st.session_state.file = file
         st.session_state.file_uploaded = True                    
- 
+
+# Initialize the results array
+results = []
+
 st.write("Please upload a XLSX file")
 upload_csv()
 if st.session_state.file_uploaded:
     st.write("XLSX file uploaded successfully.")
     dataframes = get_df_from_excel(st.session_state.file)
-
     top10lablesimagebuffer = analyze_top_10_labels(dataframes)
+    generatePDf(top10lablesimagebuffer, ["Ttio ak Lorem Ipsum is simply dummy text of the printing and typesetting industry."])    
     # create_channel_pie(dataframes["posts-20240403T080714-0500"])
-    # overallStatsTable(dataframes["posts-20240403T080714-0500"])
-    generatePDf(top10lablesimagebuffer, ["Ttio ak Lorem Ipsum is simply dummy text of the printing and typesetting industry."])
+    # results.append( label_wise_analysis(dataframes["posts-20240403T080714-0500"]) )
+    # results.append( overall_analysis(dataframes["posts-20240403T080714-0500"]) )
+    # results.append( linkedin_analysis(dataframes["posts-20240403T080714-0500"]) )
+    # results.append( facebook_analysis(dataframes["posts-20240403T080714-0500"]) )
+    # results.append( twitter_analysis(dataframes["posts-20240403T080714-0500"]) )
+    # results.append( overallStatsTable(dataframes["posts-20240403T080714-0500"]) )
     
     # pdf_buffer = io.BytesIO()
     # add_lines_to_elements("Social Media Data Report","Title")
