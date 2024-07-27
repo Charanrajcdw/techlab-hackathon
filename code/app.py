@@ -23,6 +23,11 @@ if st.session_state.file_uploaded:
     st.write("XLSX file uploaded successfully.")
     dataframes = get_df_from_excel(st.session_state.file)
     predictEng(dataframes["posts-20240403T080714-0500"])
+    # for sheet_name, df in dataframes.items():
+    #     print(f"Processing sheet: {sheet_name}")
+    #     if(sheet_name == "Corp Facebook"):
+    #         predictEng(dataframes[sheet_name])
+        
     # create_channel_pie(dataframes["posts-20240403T080714-0500"])
     # overall_analysis(dataframes["posts-20240403T080714-0500"])
     # linkedin_analysis(dataframes["posts-20240403T080714-0500"])
