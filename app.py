@@ -21,9 +21,11 @@ upload_csv()
 if st.session_state.file_uploaded:
     st.write("XLSX file uploaded successfully.")
     dataframes = get_df_from_excel(st.session_state.file)
-    # top10lablesimagebuffer = analyze_top_10_labels(dataframes)
+
+    top10lablesimagebuffer = analyze_top_10_labels(dataframes)
     # create_channel_pie(dataframes["posts-20240403T080714-0500"])
     # overallStatsTable(dataframes["posts-20240403T080714-0500"])
+    generatePDf(top10lablesimagebuffer, ["Ttio ak Lorem Ipsum is simply dummy text of the printing and typesetting industry."])
     
     # pdf_buffer = io.BytesIO()
     # add_lines_to_elements("Social Media Data Report","Title")
