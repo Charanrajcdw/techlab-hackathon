@@ -1,5 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+from io import BytesIO
 
 def overall_analysis(df):
     # Convert columns to numeric types
@@ -41,16 +42,16 @@ def overall_analysis(df):
     fig.delaxes(axes[5])
 
     # Add a common heading for the entire figure
-    fig.suptitle('Overall Performance Analysis by Media Type', fontsize=20, color="red", fontweight=600)
+    # fig.suptitle('Overall Performance Analysis by Media Type', fontsize=20, color="red", fontweight=600)
 
     # Adjust layout to give ample space and margins
     plt.subplots_adjust(left=0.09, right=0.95, top=0.9, bottom=0.05, hspace=0.4, wspace=0.2)
 
-    # Adjust layout to give ample space and margins
-    # plt.tight_layout(rect=[0, 0, 0, 0])
+    # Save the plot to a BytesIO buffer
+    buf = BytesIO()
+    plt.savefig(buf, format='png')
+    buf.seek(0)
+    plt.close(fig)  # Close the figure to free up memory
 
-    # Save the plot as a PNG image
-    plt.savefig('overall_mediaType_metrics.png')
-
-    # Show the plot
-    # plt.show()
+    # Return the image title and buffer
+    return {"title": "Overall Performance Analysis by Media Type", "img": buf}

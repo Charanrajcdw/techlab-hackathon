@@ -1,5 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+from io import BytesIO
 
 def label_wise_analysis(df, specified_labels=None):
     # If no labels are specified, get all unique labels from the dataframe
@@ -13,7 +14,7 @@ def label_wise_analysis(df, specified_labels=None):
 
     # Extract relevant columns and calculate metrics
     df_filtered['Labels'] = df_filtered['Labels'].apply(lambda x: x.split(','))
-    labels_stats = pd.DataFrame(columns=['label', 'no.of posts', '% of total posts', 'wEng rate in %', 'wEng/Post', 'total wEng'])
+    labels_stats = pd.DataFrame(columns=['label', 'no.of posts', '% of total posts', 'wEng rate in %', 'wEng/Post', 'Total wEng'])
 
     stats_list = []
 
@@ -36,11 +37,11 @@ def label_wise_analysis(df, specified_labels=None):
 
     labels_stats = pd.DataFrame(stats_list)
 
+    # Sort the labels_stats by 'Total wEng' in descending order and select the top 5
+    labels_stats = labels_stats.sort_values(by='Total wEng', ascending=False).head(5)
+
     # Plotting
     fig, ax = plt.subplots(figsize=(16, 12))
-
-    # Title
-    fig.suptitle('Label Wise Analysis of Posts', fontsize=22, fontweight='bold', color='red', ha='center', y=2.75)
 
     # Creating table
     table = ax.table(cellText=labels_stats.values, colLabels=labels_stats.columns, cellLoc='center', loc='center')
@@ -58,7 +59,7 @@ def label_wise_analysis(df, specified_labels=None):
             cell.set_facecolor('black')
         else:
             if i % 2 == 0:
-                cell.set_facecolor('#f2f2f2')  # Light grey for alternate rows
+                cell.set_facecolor((204/255, 0, 0, 0.3))  # red RGB with alpha
             else:
                 cell.set_facecolor('white')
         cell.set_edgecolor('black')
@@ -66,10 +67,13 @@ def label_wise_analysis(df, specified_labels=None):
     ax.axis('off')
 
     # Adjust layout
-    plt.subplots_adjust(left=0.05, right=0.95, top=0.90, bottom=0.1)
+    plt.subplots_adjust(left=0.05, right=0.95, top=0.85, bottom=0.1)
 
-    # Save as PNG
-    plt.savefig('label_wise_analysis.png', bbox_inches='tight', pad_inches=0.5)
+    # Save the plot to a BytesIO buffer
+    buf = BytesIO()
+    plt.savefig(buf, format='png', bbox_inches='tight', pad_inches=0.5)
+    buf.seek(0)
+    plt.close(fig)  # Close the figure to free up memory
 
-# Example usage
-# label_wise_analysis(dataframes["posts-20240403T080714-0500"])
+    # Return the image buffer
+    return {"title": "Top performing Labels - Statistics", "img": buf}

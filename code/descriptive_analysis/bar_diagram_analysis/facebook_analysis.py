@@ -1,6 +1,6 @@
-
 import pandas as pd
 import matplotlib.pyplot as plt
+from io import BytesIO
 
 def facebook_analysis(df):
     # Filter data for Facebook
@@ -37,18 +37,21 @@ def facebook_analysis(df):
 
     for idx, metric in enumerate(metrics):
         axes[idx].bar(agg_df['Media Type'], agg_df[metric], color='skyblue')
-        axes[idx].set_title(metric_labels[idx])
+        axes[idx].set_title(metric_labels[idx], fontsize=18, pad=20.0)
         axes[idx].set_xlabel('Media Type')
         axes[idx].set_ylabel(metric_labels[idx])
 
     # Remove the empty subplot
     fig.delaxes(axes[5])
 
-    # Add a common heading for the entire figure
-    fig.suptitle('Facebook Performance Analysis by Media Type', fontsize=20, color="red", fontweight=600)
-
     # Adjust layout to give ample space and margins
     plt.subplots_adjust(left=0.1, right=0.95, top=0.9, bottom=0.05, hspace=0.4, wspace=0.3)
 
-    # Save the plot as a PNG image
-    plt.savefig('facebook_mediaType_metrics.png')
+    # Save the plot to a BytesIO buffer
+    buf = BytesIO()
+    plt.savefig(buf, format='png')
+    buf.seek(0)
+    plt.close(fig)  # Close the figure to free up memory
+
+    # Return the image buffer
+    return {"title": "Facebook Performance Analysis by Media Type", "img": buf}
