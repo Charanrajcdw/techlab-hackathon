@@ -1,6 +1,8 @@
 import pandas as pd
+import matplotlib.pyplot as plt
+import io
 
-# For stats calculation
+# Function to calculate statistics
 def calculate_stats(df):
     total_posts = df.shape[0]
     total_impressions = df['Facebook - Post Impressions - Organic'].sum() + df['Linkedin - Post Impressions'].sum() + df['Twitter - Post Impressions - Advanced'].sum()
@@ -20,12 +22,8 @@ def calculate_stats(df):
         'Avg wEng Rate': f"{round(avg_weng_rate * 100, 2)}%"
     }
 
-
 # Function to calculate statistics and format them into a table
 def overallStatsTable(df):
-    # From the first spreadsheet
-    # df = list(dataframes.values())[0]
-    
     # Convert columns to numeric types
     df['Facebook - Post Impressions - Organic'] = pd.to_numeric(df['Facebook - Post Impressions - Organic'], errors='coerce')
     df['Linkedin - Post Impressions'] = pd.to_numeric(df['Linkedin - Post Impressions'], errors='coerce')
@@ -49,18 +47,34 @@ def overallStatsTable(df):
         'Overall': [total_stats['Total Posts'], total_stats['Total Impressions'], total_stats['Total Engagements'], total_stats['Total Weighted Engagements'], total_stats['Total Link Clicks'], total_stats['Avg CTR'], total_stats['Avg wEng Rate']]
     }).T
 
-    ############### BEGIN : To transpose the arrangement ###############
-    # numeric_cols = ['Facebook', 'Twitter', 'Linkedin', 'Overall']
-    # stats_df[numeric_cols] = stats_df[numeric_cols].astype(int, errors='ignore')
-    ############### END : To transpose the arrangement ###############
-
-    ############### BEGIN : To transpose the arrangement ###############
     # Set the first row as the header
     stats_df.columns = stats_df.iloc[0]
     stats_df = stats_df[1:]
 
     numeric_cols = ['Total Posts', 'Total Impressions', 'Total Engagements', 'Total Weighted Engagements', 'Total Link Clicks']
     stats_df[numeric_cols] = stats_df[numeric_cols].astype(int, errors='ignore')
-    ############### END : To transpose the arrangement ###############
 
-    print(stats_df)
+    # Plot the table
+    fig, ax = plt.subplots()
+    ax.axis('tight')
+    ax.axis('off')
+    table = ax.table(cellText=stats_df.values, colLabels=stats_df.columns, cellLoc='center', loc='center', edges='closed')
+
+    # Style the table
+    for (i, j), cell in table._cells.items():
+        if i == 0:  # Header row
+            cell.set_fontsize(16)
+            cell.set_text_props(weight='bold', color='white')
+            cell.set_facecolor('black')
+        else:
+            cell.set_fontsize(16)
+            if (i - 1) % 2 == 0:  # Alternate rows (starting from row 1 as the header is row 0)
+                cell.set_facecolor((204/255, 0, 0, 0.3))  # red RGB with alpha
+
+    # Save the table as an image buffer
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png', bbox_inches='tight')
+    buf.seek(0)
+
+    # Return the overall statistics and the image buffer
+    return {"Overall Statistics": stats_df, "img": buf}

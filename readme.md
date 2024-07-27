@@ -13,3 +13,6 @@
 - statsmodels
 - streamlit
 - python-dotenv
+- matplotlib
+- scikit-learn
+- textblob
