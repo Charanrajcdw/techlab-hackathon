@@ -2,8 +2,9 @@ import streamlit as st
 import io
 import markdown2
 from dotenv import load_dotenv
-from code import *
-
+from utils import *
+from descriptive_analysis import *
+from predictive_analysis import *
 
 load_dotenv()
  
@@ -14,7 +15,7 @@ def upload_csv():
     file = st.file_uploader("Upload xlsx files", type=["xlsx"])
     if file is not None:
         st.session_state.file = file
-        st.session_state.file_uploaded = True           
+        st.session_state.file_uploaded = True                    
 
 # Initialize the results array
 results = []
@@ -24,7 +25,8 @@ upload_csv()
 if st.session_state.file_uploaded:
     st.write("XLSX file uploaded successfully.")
     dataframes = get_df_from_excel(st.session_state.file)
-    create_channel_pie(dataframes["posts-20240403T080714-0500"])
+        
+    # create_channel_pie(dataframes["posts-20240403T080714-0500"])
     # results.append( label_wise_analysis(dataframes["posts-20240403T080714-0500"]) )
     # results.append( overall_analysis(dataframes["posts-20240403T080714-0500"]) )
     # results.append( linkedin_analysis(dataframes["posts-20240403T080714-0500"]) )
