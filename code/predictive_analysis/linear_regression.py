@@ -1,4 +1,3 @@
-import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
@@ -9,7 +8,6 @@ from sklearn.pipeline import Pipeline
 from sklearn.impute import KNNImputer
 import joblib
 from scipy.sparse import hstack, csr_matrix
-import numpy as np
 
 def createModel(df):
     # One-hot encode categorical features
@@ -26,7 +24,6 @@ def createModel(df):
     # Combine all features into a single feature set
     additional_features = csr_matrix(df[['Label Count', 'Post Length', 'Title Sentiment', 'Text Sentiment']].values)
     post_link_clicks_eng = csr_matrix(df[["Post Link Shortener Clicks", "ENG"]].values)
-    # Combine all features into a single feature set
     X_sparse = hstack((encoded_features, additional_features, post_link_clicks_eng))
 
     # Convert sparse matrix to dense format
@@ -40,7 +37,7 @@ def createModel(df):
 
     # Train a linear regression model
     pipeline = Pipeline([
-        ('imputer', KNNImputer(n_neighbors=5)),
+        ('imputer', KNNImputer(n_neighbors=10)),
         ('model', LinearRegression())
     ])
 
@@ -61,23 +58,11 @@ def createModel(df):
     joblib.dump(pipeline, 'model.pkl')
     joblib.dump(encoder, 'encoder.pkl')
 
-def predictValue():
+def predictValue(value):
     # Load the trained model and transformers
     loaded_pipeline = joblib.load('model.pkl')
     encoder = joblib.load('encoder.pkl')
-
     categorical_features = ['Account', 'Channel', 'Media Type']
-
-    value = pd.DataFrame([{
-        'Account': 'Page: CDW Corporation',
-        'Channel': 'Facebook',
-        'Media Type': 'Video',
-        'Post Title': 'CDW Planned_Video_MKT72017_0000',
-        'Post Text': 'For Alexis, her top three reasons for wanting to work at CDW centered around our vibrant, supportive culture. Hear what stood out to her and why they made a difference in her decision to join the team. https://www.cdwjobs.com/?bid=4861&cm_ven=SocialMedia&cm_cat=facebook&cm_pla=MKT72017adu0000P0000&cm_ite=cdwcorp #LifeAtCDW #WorkCulture #ProfessionalDevelopment',
-        'Labels': 'T_professionaldevelopment,T_BrandTalent,PostType_Video,MT_CDWCoworker,T_CDWCareers',
-        'Post Link Shortener Clicks': np.nan,
-        'ENG': np.nan
-    }])
     
     # Apply preprocessing
     encoded_features = encoder.transform(value[categorical_features])
@@ -96,4 +81,4 @@ def predictValue():
 
     # Predict using the loaded model
     prediction = loaded_pipeline.predict(new_value_dense)
-    print("Predicted Value:", prediction[0])
+    return prediction[0]
