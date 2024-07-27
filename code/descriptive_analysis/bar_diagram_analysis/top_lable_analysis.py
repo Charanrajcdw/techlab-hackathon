@@ -3,8 +3,7 @@ import matplotlib.pyplot as plt
 from io import BytesIO
 
 
-def analyze_top_10_labels(data):
-    df = data['Corp Facebook']
+def analyze_top_10_labels(df):
     print(df.head())
 
     # Initialize a dictionary to aggregate wENG Rate for each label
@@ -33,7 +32,7 @@ def analyze_top_10_labels(data):
     plt.figure(figsize=(10, 6))
     plt.bar(top_labels['Labels'], top_labels['Count'], color='skyblue')
     plt.xlabel('Labels')
-    plt.ylabel('Labels count surpassed wENG rate')
+    plt.ylabel('Labels freuquency that surpassed wENG rate')
     plt.title('Top 10 Performing Labels by wENG Rate')
     plt.xticks(rotation=45, ha='right')
     plt.tight_layout()
@@ -43,11 +42,7 @@ def analyze_top_10_labels(data):
     plt.savefig(img_buffer, format='png')
     img_buffer.seek(0)  # Rewind the buffer
 
-    # Optional: Display the plot
-    #plt.savefig("image.png")
-
-    # img_buffer now contains the PNG image
-    return img_buffer
+    return  {"title": "Top 10 Performing Labels by wENG Rate", "img": img_buffer, "chart_type": "single_bar_chart"}
 
     
 

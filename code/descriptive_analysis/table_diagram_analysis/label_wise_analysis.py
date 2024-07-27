@@ -76,4 +76,4 @@ def label_wise_analysis(df, specified_labels=None):
     plt.close(fig)  # Close the figure to free up memory
 
     # Return the image buffer
-    return {"title": "Top performing Labels - Statistics", "img": buf}
+    return {"title": "Top performing Labels - Statistics", "img": buf, "chart_type": "table"}

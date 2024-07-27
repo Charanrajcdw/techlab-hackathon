@@ -54,4 +54,4 @@ def overall_analysis(df):
     plt.close(fig)  # Close the figure to free up memory
 
     # Return the image title and buffer
-    return {"title": "Overall Performance Analysis by Media Type", "img": buf}
+    return {"title": "Overall Performance Analysis by Media Type", "img": buf, "chart_type": "collective_bar_chart"}

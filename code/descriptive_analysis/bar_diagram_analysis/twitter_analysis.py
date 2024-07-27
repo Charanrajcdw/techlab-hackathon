@@ -56,4 +56,4 @@ def twitter_analysis(df):
     plt.close(fig)  # Close the figure to free up memory
 
     # Return the image buffer
-    return {"title": "Twitter Performance Analysis by Media Type", "img": buf}
+    return {"title": "Twitter Performance Analysis by Media Type", "img": buf, "chart_type": "collective_bar_chart"}

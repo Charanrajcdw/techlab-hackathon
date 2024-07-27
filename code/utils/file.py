@@ -7,6 +7,7 @@ def get_df_from_excel(excel_file_path):
         df = excel_data.parse(sheet_name)
         dataframes[sheet_name] = df
         print(f"Loaded sheet: {sheet_name}")
+        break
     return dataframes
 
 
