@@ -13,3 +13,4 @@
 - statsmodels
 - streamlit
 - python-dotenv
+- matplotlib

@@ -22,6 +22,11 @@ if st.session_state.file_uploaded:
     st.write("XLSX file uploaded successfully.")
     dataframes = get_df_from_excel(st.session_state.file)
     create_channel_pie(dataframes["posts-20240403T080714-0500"])
+    # overall_analysis(dataframes["posts-20240403T080714-0500"])
+    # linkedin_analysis(dataframes["posts-20240403T080714-0500"])
+    # facebook_analysis(dataframes["posts-20240403T080714-0500"])
+    # twitter_analysis(dataframes["posts-20240403T080714-0500"])
+    # label_wise_analysis(dataframes["posts-20240403T080714-0500"])
     # overallStatsTable(dataframes["posts-20240403T080714-0500"])
     
     # pdf_buffer = io.BytesIO()
