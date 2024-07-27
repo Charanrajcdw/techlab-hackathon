@@ -2,54 +2,45 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
-from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn.preprocessing import OneHotEncoder
 from scipy.sparse import hstack
 from textblob import TextBlob
 from sklearn.pipeline import Pipeline
-from sklearn.impute import SimpleImputer
+from sklearn.impute import KNNImputer
+import joblib
+from scipy.sparse import hstack, csr_matrix
+import numpy as np
 
-
-def predictEng(df):
-
+def createModel(df):
     # One-hot encode categorical features
     categorical_features = ['Account', 'Channel', 'Media Type']
-    encoder = OneHotEncoder(sparse_output=False)
+    encoder = OneHotEncoder(sparse_output=True, handle_unknown='ignore')
     encoded_features = encoder.fit_transform(df[categorical_features])
-
-    # Vectorize text features
-    vectorizer = CountVectorizer(max_features=1000)
-    title_vectorized = vectorizer.fit_transform(df['Post Title'])
-    text_vectorized = vectorizer.fit_transform(df['Post Text'])
-    labels_vectorized = vectorizer.fit_transform(df['Labels'])
-
-    # Vectorize text features using TF-IDF
-    tfidf_vectorizer = TfidfVectorizer(max_features=1000)
-    title_tfidf = tfidf_vectorizer.fit_transform(df['Post Title'])
-    text_tfidf = tfidf_vectorizer.fit_transform(df['Post Text'])
-    labels_tfidf = tfidf_vectorizer.fit_transform(df['Labels'])
 
     # Calculate derived attributes
     df['Label Count'] = df['Labels'].apply(lambda x: len(x.split(",")))
     df['Post Length'] = df['Post Text'].apply(len)
-
-    # getting sentimental scores
     df['Title Sentiment'] = df['Post Title'].apply(lambda x: TextBlob(x).sentiment.polarity)
     df['Text Sentiment'] = df['Post Text'].apply(lambda x: TextBlob(x).sentiment.polarity)
 
     # Combine all features into a single feature set
-    additional_features = df[['Label Count', 'Post Length','Title Sentiment','Text Sentiment']].values
-    X = hstack((encoded_features, title_tfidf, text_tfidf, labels_tfidf,title_vectorized, text_vectorized, labels_vectorized, additional_features,df[["Post Link Shortener Clicks","ENG"]]))
+    additional_features = csr_matrix(df[['Label Count', 'Post Length', 'Title Sentiment', 'Text Sentiment']].values)
+    post_link_clicks_eng = csr_matrix(df[["Post Link Shortener Clicks", "ENG"]].values)
+    # Combine all features into a single feature set
+    X_sparse = hstack((encoded_features, additional_features, post_link_clicks_eng))
+
+    # Convert sparse matrix to dense format
+    X_dense = X_sparse.toarray()
 
     # Target variable
     y = df['wENG']
         
     # Split the data into training and testing sets
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X_dense, y, test_size=0.2, random_state=42)
 
     # Train a linear regression model
     pipeline = Pipeline([
-        ('imputer', SimpleImputer(strategy='mean')),
+        ('imputer', KNNImputer(n_neighbors=5)),
         ('model', LinearRegression())
     ])
 
@@ -65,3 +56,44 @@ def predictEng(df):
     print("Mean Absolute Error:", mae)
     print("Mean Squared Error:", mse)
     print("R-squared:", r2)
+
+    # Save the model and transformers
+    joblib.dump(pipeline, 'model.pkl')
+    joblib.dump(encoder, 'encoder.pkl')
+
+def predictValue():
+    # Load the trained model and transformers
+    loaded_pipeline = joblib.load('model.pkl')
+    encoder = joblib.load('encoder.pkl')
+
+    categorical_features = ['Account', 'Channel', 'Media Type']
+
+    value = pd.DataFrame([{
+        'Account': 'Page: CDW Corporation',
+        'Channel': 'Facebook',
+        'Media Type': 'Video',
+        'Post Title': 'CDW Planned_Video_MKT72017_0000',
+        'Post Text': 'For Alexis, her top three reasons for wanting to work at CDW centered around our vibrant, supportive culture. Hear what stood out to her and why they made a difference in her decision to join the team. https://www.cdwjobs.com/?bid=4861&cm_ven=SocialMedia&cm_cat=facebook&cm_pla=MKT72017adu0000P0000&cm_ite=cdwcorp #LifeAtCDW #WorkCulture #ProfessionalDevelopment',
+        'Labels': 'T_professionaldevelopment,T_BrandTalent,PostType_Video,MT_CDWCoworker,T_CDWCareers',
+        'Post Link Shortener Clicks': np.nan,
+        'ENG': np.nan
+    }])
+    
+    # Apply preprocessing
+    encoded_features = encoder.transform(value[categorical_features])
+
+    value['Label Count'] = value['Labels'].apply(lambda x: len(x.split(",")))
+    value['Post Length'] = value['Post Text'].apply(len)
+    value['Title Sentiment'] = value['Post Title'].apply(lambda x: TextBlob(x).sentiment.polarity)
+    value['Text Sentiment'] = value['Post Text'].apply(lambda x: TextBlob(x).sentiment.polarity)
+
+    additional_features = csr_matrix(value[['Label Count', 'Post Length', 'Title Sentiment', 'Text Sentiment']].values)
+    post_link_clicks_eng = csr_matrix(value[['Post Link Shortener Clicks', 'ENG']].values)
+    new_value_sparse = hstack((encoded_features, additional_features, post_link_clicks_eng))
+
+    # Convert sparse matrix to dense format
+    new_value_dense = new_value_sparse.toarray()
+
+    # Predict using the loaded model
+    prediction = loaded_pipeline.predict(new_value_dense)
+    print("Predicted Value:", prediction[0])
