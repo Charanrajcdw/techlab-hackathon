@@ -3,6 +3,7 @@ import io
 import markdown2
 from dotenv import load_dotenv
 from utils import *
+from descriptive_analysis import *
 from predictive_analysis import *
 
 load_dotenv()
@@ -21,7 +22,15 @@ upload_csv()
 if st.session_state.file_uploaded:
     st.write("XLSX file uploaded successfully.")
     dataframes = get_df_from_excel(st.session_state.file)
-    predictEng(dataframes)
+    predictEng(dataframes["posts-20240403T080714-0500"])
+    # create_channel_pie(dataframes["posts-20240403T080714-0500"])
+    # overall_analysis(dataframes["posts-20240403T080714-0500"])
+    # linkedin_analysis(dataframes["posts-20240403T080714-0500"])
+    # facebook_analysis(dataframes["posts-20240403T080714-0500"])
+    # twitter_analysis(dataframes["posts-20240403T080714-0500"])
+    # label_wise_analysis(dataframes["posts-20240403T080714-0500"])
+    # overallStatsTable(dataframes["posts-20240403T080714-0500"])
+    
     # pdf_buffer = io.BytesIO()
     # add_lines_to_elements("Social Media Data Report","Title")
     # for sheet_name, df in dataframes.items():
