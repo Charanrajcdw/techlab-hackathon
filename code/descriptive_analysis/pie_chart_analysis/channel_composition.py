@@ -41,7 +41,7 @@ def create_channel_pie(df):
 
     # Create a bar chart
     plt.figure(figsize=(10, 7))
-    channel_counts.plot(kind='bar', color=['#a64040', '#7f7f7f', '#cc0000'])
+    channel_counts.plot(kind='bar', color=['#cc0000', '#7f7f7f', '#cc0000'])
     plt.title('Number of Posts Surpassing wENG Thresholds by Channel')
     plt.xlabel('Channel')
     plt.ylabel('Number of Posts')

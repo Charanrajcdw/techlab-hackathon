@@ -1,6 +1,4 @@
 import streamlit as st
-import io
-import markdown2
 from dotenv import load_dotenv
 from utils import *
 from descriptive_analysis import *
@@ -29,15 +27,8 @@ st.markdown(custom_html, unsafe_allow_html=True)
 
 dummysummary = "Social media marketing analysis involves the systematic study of social media platforms to understand and optimize marketing efforts. It encompasses various metrics, methodologies" 
  
-
 if 'file_uploaded' not in st.session_state:
     st.session_state.file_uploaded = False
- 
-def upload_csv():
-    file = st.file_uploader("Upload xlsx files", type=["xlsx"])
-    if file is not None:
-        st.session_state.file = file
-        st.session_state.file_uploaded = True  
 
 def display_pdf_preview(pdf_buffer):
     pdf_buffer.seek(0)
@@ -51,19 +42,25 @@ def display_pdf_preview(pdf_buffer):
 # Initialize the results array
 results = []
 
-st.write("Please upload a XLSX file")
-upload_csv()
+if not st.session_state.file_uploaded:
+    st.write("Please upload a XLSX file")
+    file = st.file_uploader("Upload xlsx files", type=["xlsx"])
+    if file is not None:
+        st.session_state.dataframes = get_df_from_excel(file)
+        st.session_state.file_uploaded = True  
+        createModel(st.session_state.dataframes["posts-20240403T080714-0500"])  
+        st.rerun()                
+
 if st.session_state.file_uploaded:
-    st.write("XLSX file uploaded successfully.")
-    dataframes = get_df_from_excel(st.session_state.file)
-    results.append( analyze_top_10_labels(dataframes["posts-20240403T080714-0500"]) )
-    results.extend( create_channel_pie(dataframes["posts-20240403T080714-0500"]))
-    results.append( label_wise_analysis(dataframes["posts-20240403T080714-0500"]) )
-    results.append( overall_analysis(dataframes["posts-20240403T080714-0500"]) )
-    results.append( linkedin_analysis(dataframes["posts-20240403T080714-0500"]) )
-    results.append( facebook_analysis(dataframes["posts-20240403T080714-0500"]) )
-    results.append( twitter_analysis(dataframes["posts-20240403T080714-0500"]) )
-    results.append( overallStatsTable(dataframes["posts-20240403T080714-0500"]) )
+    df = st.session_state.dataframes["posts-20240403T080714-0500"]
+    results.append(analyze_top_10_labels(df))
+    results.extend(create_channel_pie(df))
+    results.append(label_wise_analysis(df))
+    results.append(overall_analysis(df))
+    results.append(linkedin_analysis(df))
+    results.append(facebook_analysis(df))
+    results.append(twitter_analysis(df))
+    results.append(overallStatsTable(df))
 
     # TODO :: need to get Summary text from LLM for first page XL Summary -> As of now Hard coding it
     xlsummary = dummysummary
@@ -73,21 +70,11 @@ if st.session_state.file_uploaded:
     doc = generatePDf(results, dummysummary, keypoints)   
 
     st.download_button("Download PDF", key="button 1", data= doc, file_name="report.pdf", mime="application/pdf")
-    pdf_viewer(input= doc.getvalue(),
-                   width=700)
+    pdf_viewer(input= doc.getvalue(), width=700)
     st.download_button("Download PDF", key="button 2", data= doc, file_name="report.pdf", mime="application/pdf")
     
-    # pdf_buffer = io.BytesIO()
-    # add_lines_to_elements("Social Media Data Report","Title")
-    # for sheet_name, df in dataframes.items():
-    #     print(f"Processing sheet: {sheet_name}")
     #     agent = create_agent(df)
     #     queries = ["give no of columns and rows in file"]
     #     for query in queries:
     #         response=process_query(query,agent)
-    #         add_lines_to_elements(markdown2.markdown(response))
-    # build_pdf(pdf_buffer)
-    # images = get_pdf_preview(pdf_buffer)
-    # for img in images:
-    #     st.image(img)
-    # st.download_button("Download PDF", data=pdf_buffer, file_name="report.pdf", mime="application/pdf")
+    

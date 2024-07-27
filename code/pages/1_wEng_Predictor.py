@@ -2,20 +2,20 @@ import streamlit as st
 from utils import *
 from predictive_analysis import *
 import numpy as np
-
-if 'model_file_uploaded' not in st.session_state:
-    st.session_state.model_file_uploaded = False
  
-if not st.session_state.model_file_uploaded:
+if 'file_uploaded' not in st.session_state:
+    st.session_state.file_uploaded = False
+
+if not st.session_state.file_uploaded:
     st.write("Please upload a XLSX file")
     file = st.file_uploader("Upload xlsx files", type=["xlsx"])
     if file is not None:
         st.session_state.dataframes = get_df_from_excel(file)
-        st.session_state.model_file_uploaded = True  
+        st.session_state.file_uploaded = True  
         createModel(st.session_state.dataframes["posts-20240403T080714-0500"])  
         st.rerun()                
 
-if st.session_state.model_file_uploaded:
+if st.session_state.file_uploaded:
     df = st.session_state.dataframes["posts-20240403T080714-0500"]
     with st.form("form"):
         account=st.selectbox("Account",df['Account'].unique().tolist(),key="account")
