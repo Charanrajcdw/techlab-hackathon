@@ -12,7 +12,6 @@
 - langchain_google_genai
 - statsmodels
 - streamlit
-- python-dotenv
 - matplotlib
 - scikit-learn
 - textblob

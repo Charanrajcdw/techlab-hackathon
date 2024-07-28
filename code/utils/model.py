@@ -1,5 +1,11 @@
 from langchain_experimental.agents.agent_toolkits import create_pandas_dataframe_agent
 from langchain_openai import AzureOpenAI
+import streamlit as st
+import os
+
+os.environ["OPENAI_API_VERSION"] = st.secrets.OPENAI_API_VERSION
+os.environ["AZURE_OPENAI_ENDPOINT"] = st.secrets.AZURE_OPENAI_ENDPOINT
+os.environ["AZURE_OPENAI_API_KEY"] = st.secrets.AZURE_OPENAI_API_KEY
 
 def create_agent(df):
     llm = AzureOpenAI(
