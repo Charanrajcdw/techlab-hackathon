@@ -6,8 +6,7 @@ from reportlab.lib.utils import ImageReader
 from reportlab.lib.enums import TA_CENTER, TA_LEFT
 from reportlab.lib.colors import black, HexColor
 import io
-
-
+import os
 
 class FooterCanvas(canvas.Canvas):
  
@@ -29,7 +28,7 @@ class FooterCanvas(canvas.Canvas):
  
     def draw_canvas(self, page_count):
         # Path to your image
-        image_path = "./logo.png"
+        image_path = 'code/logo.png'
         image = ImageReader(image_path)
         
         # Position for the image

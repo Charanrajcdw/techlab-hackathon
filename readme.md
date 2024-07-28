@@ -9,9 +9,13 @@
 - markdown2
 - langchain
 - langchain_experimental
-- langchain_google_genai
+- langchain_openai
 - statsmodels
 - streamlit
 - matplotlib
 - scikit-learn
 - textblob
+- streamlit_pdf_viewer
+- openpyxl
+- tabulate
+- statsmodels

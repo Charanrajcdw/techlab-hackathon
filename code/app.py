@@ -1,12 +1,9 @@
 import streamlit as st
-from dotenv import load_dotenv
 from utils import *
 from descriptive_analysis import *
 from predictive_analysis import *
 import pdfplumber 
 from streamlit_pdf_viewer import pdf_viewer
-
-load_dotenv()
 
 # Define the custom HTML and CSS
 custom_html = """
