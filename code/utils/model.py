@@ -1,6 +1,5 @@
 from langchain_experimental.agents.agent_toolkits import create_pandas_dataframe_agent
 from langchain_openai import AzureOpenAI
-import pandas as pd
 
 def create_agent(df):
     llm = AzureOpenAI(
