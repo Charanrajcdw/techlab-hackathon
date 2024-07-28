@@ -21,8 +21,6 @@ custom_html = """
  
 # Write the custom HTML to the Streamlit app
 st.markdown(custom_html, unsafe_allow_html=True)
-
-dummysummary = "Social media marketing analysis involves the systematic study of social media platforms to understand and optimize marketing efforts. It encompasses various metrics, methodologies" 
  
 if 'file_uploaded' not in st.session_state:
     st.session_state.file_uploaded = False
@@ -60,19 +58,26 @@ if st.session_state.file_uploaded:
         results.append(twitter_analysis(df))
         results.append(overallStatsTable(df))
 
-        # TODO :: need to get Summary text from LLM for first page XL Summary -> As of now Hard coding it
-        xlsummary = dummysummary
-        # TODO :: need to get keypoints text from LLM for second page -> As of now Hard coding it
-        keypoints = ["point 1 "," point 2" ,"point 3" ,"point 4", "point 5"]
+        # create agent
+        agent = create_agent(df)
+        #generate summary of excel
+        xlsummary = process_query("give detailed summary of dataframe in marketing analysis format??", agent)
+        
+        keypointsqueries = ["For dataframe, list the column names along with their data types and the count of missing values",
+        "Generate a statistical summary for each numerical column in the Excel file, including metrics such as mean, median, standard deviation, minimum, and maximum values.",
+        "For each categorical column in the Excel file, list the unique values and their respective counts."
+        "Perform a data quality check on the Excel file to identify any inconsistencies, duplicate rows, or outliers in the data.",
+        "List the top 5 and bottom 5 records for each numerical column based on their values."]
 
-        st.session_state.doc = generatePDf(results, dummysummary, keypoints)   
+        keypoints = []
+        #generate keypoints
+        for keypointquery in keypointsqueries:
+            keypoints.append(process_query(keypointquery, agent))
+
+        st.session_state.doc = generatePDf(results, xlsummary, keypoints)   
     doc=st.session_state.doc
     st.download_button("Download PDF", key="button 1", data= doc, file_name="report.pdf", mime="application/pdf")
     pdf_viewer(input= doc.getvalue(), width=700)
     st.download_button("Download PDF", key="button 2", data= doc, file_name="report.pdf", mime="application/pdf")
     
-    #     agent = create_agent(df)
-    #     queries = ["give no of columns and rows in file"]
-    #     for query in queries:
-    #         response=process_query(query,agent)
     
