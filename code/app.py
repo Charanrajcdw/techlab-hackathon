@@ -53,22 +53,23 @@ if not st.session_state.file_uploaded:
 
 if st.session_state.file_uploaded:
     df = st.session_state.dataframes["posts-20240403T080714-0500"]
-    results.append(analyze_top_10_labels(df))
-    results.extend(create_channel_pie(df))
-    results.append(label_wise_analysis(df))
-    results.append(overall_analysis(df))
-    results.append(linkedin_analysis(df))
-    results.append(facebook_analysis(df))
-    results.append(twitter_analysis(df))
-    results.append(overallStatsTable(df))
+    if "doc" not in st.session_state:
+        results.append(analyze_top_10_labels(df))
+        results.extend(create_channel_pie(df))
+        results.append(label_wise_analysis(df))
+        results.append(overall_analysis(df))
+        results.append(linkedin_analysis(df))
+        results.append(facebook_analysis(df))
+        results.append(twitter_analysis(df))
+        results.append(overallStatsTable(df))
 
-    # TODO :: need to get Summary text from LLM for first page XL Summary -> As of now Hard coding it
-    xlsummary = dummysummary
-    # TODO :: need to get keypoints text from LLM for second page -> As of now Hard coding it
-    keypoints = ["point 1 "," point 2" ,"point 3" ,"point 4", "point 5"]
+        # TODO :: need to get Summary text from LLM for first page XL Summary -> As of now Hard coding it
+        xlsummary = dummysummary
+        # TODO :: need to get keypoints text from LLM for second page -> As of now Hard coding it
+        keypoints = ["point 1 "," point 2" ,"point 3" ,"point 4", "point 5"]
 
-    doc = generatePDf(results, dummysummary, keypoints)   
-
+        st.session_state.doc = generatePDf(results, dummysummary, keypoints)   
+    doc=st.session_state.doc
     st.download_button("Download PDF", key="button 1", data= doc, file_name="report.pdf", mime="application/pdf")
     pdf_viewer(input= doc.getvalue(), width=700)
     st.download_button("Download PDF", key="button 2", data= doc, file_name="report.pdf", mime="application/pdf")
