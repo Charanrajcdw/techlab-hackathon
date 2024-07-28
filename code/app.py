@@ -63,16 +63,16 @@ if st.session_state.file_uploaded:
         #generate summary of excel
         xlsummary = process_query("give detailed summary of dataframe in marketing analysis format??", agent)
         
-        keypointsqueries = ["For dataframe, list the column names along with their data types and the count of missing values",
+        keypoints = ["For dataframe, list the column names along with their data types and the count of missing values",
         "Generate a statistical summary for each numerical column in the Excel file, including metrics such as mean, median, standard deviation, minimum, and maximum values.",
         "For each categorical column in the Excel file, list the unique values and their respective counts."
         "Perform a data quality check on the Excel file to identify any inconsistencies, duplicate rows, or outliers in the data.",
         "List the top 5 and bottom 5 records for each numerical column based on their values."]
 
-        keypoints = []
-        #generate keypoints
-        for keypointquery in keypointsqueries:
-            keypoints.append(process_query(keypointquery, agent))
+        # keypoints = []
+        # #generate keypoints
+        # for keypointquery in keypointsqueries:
+        #     keypoints.append(process_query(keypointquery, agent))
 
         st.session_state.doc = generatePDf(results, xlsummary, keypoints)   
     doc=st.session_state.doc
