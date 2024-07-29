@@ -21,8 +21,6 @@ custom_html = """
  
 # Write the custom HTML to the Streamlit app
 st.markdown(custom_html, unsafe_allow_html=True)
-
-dummysummary = "Social media marketing analysis involves the systematic study of social media platforms to understand and optimize marketing efforts. It encompasses various metrics, methodologies" 
  
 if 'file_uploaded' not in st.session_state:
     st.session_state.file_uploaded = False
@@ -59,20 +57,35 @@ if st.session_state.file_uploaded:
         results.append(facebook_analysis(df))
         results.append(twitter_analysis(df))
         results.append(overallStatsTable(df))
+        results.append(length_weng_correlation(df))
+        results.append(label_weng_correlation(df))
+        results.append(length_ctr_correlation(df))
+        results.append(label_ctr_correlation(df))
 
-        # TODO :: need to get Summary text from LLM for first page XL Summary -> As of now Hard coding it
-        xlsummary = dummysummary
-        # TODO :: need to get keypoints text from LLM for second page -> As of now Hard coding it
-        keypoints = ["point 1 "," point 2" ,"point 3" ,"point 4", "point 5"]
+        # create agent
+        agent = create_agent(df)
+        
+        keypointsqueries = [
+            "How many posts were made across each channel respectively and what is the total number of posts ?",
+            "give a no of posts made across each channel with respect to media type?",
+            "Which type of content posted on linkedIn, twitter, facebook got highest post impressions respectively?",
+            "Give average wEng of LinkedIn, Twitter, Facebook posts'",
+            "give as a sentence which post had highest likes in facebook with it's name and no of likes?",
+            "give as a sentence which post had highest impressions in facebook with it's name and no of impressions?",
+            "give as a sentence which post had highest likes in linkedin with it's name and no of likes?",
+            "give as a sentence which post had highest impressions in linkedin with it's name and no of impressions?",
+            "give as a sentence which post had highest likes in twitter with it's name and no of likes?",
+            "give as a sentence which post had highest impressions in twitter with it's name and no of impressions?", 
+        ]
 
-        st.session_state.doc = generatePDf(results, dummysummary, keypoints)   
+        keypoints = []
+        for keypointquery in keypointsqueries:
+            keypoints.append(process_query(keypointquery, agent))
+
+        st.session_state.doc = generatePDf(results, keypoints)   
     doc=st.session_state.doc
     st.download_button("Download PDF", key="button 1", data= doc, file_name="report.pdf", mime="application/pdf")
     pdf_viewer(input= doc.getvalue(), width=700)
     st.download_button("Download PDF", key="button 2", data= doc, file_name="report.pdf", mime="application/pdf")
     
-    #     agent = create_agent(df)
-    #     queries = ["give no of columns and rows in file"]
-    #     for query in queries:
-    #         response=process_query(query,agent)
     
