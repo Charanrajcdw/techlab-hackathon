@@ -40,11 +40,11 @@ def overallStatsTable(df):
  
     # Format and print the results in a table format
     stats_df = pd.DataFrame({
-        'Platform/Metric': ['Total Posts', 'Total Impressions', 'Total Engagements', 'Total Weighted Engagements', 'Total Link Clicks', 'Avg CTR', 'Avg wEng Rate'],
-        'Facebook': [facebook_stats['Total Posts'], facebook_stats['Total Impressions'], facebook_stats['Total Engagements'], facebook_stats['Total Weighted Engagements'], facebook_stats['Total Link Clicks'], facebook_stats['Avg CTR'], facebook_stats['Avg wEng Rate']],
-        'Twitter': [twitter_stats['Total Posts'], twitter_stats['Total Impressions'], twitter_stats['Total Engagements'], twitter_stats['Total Weighted Engagements'], twitter_stats['Total Link Clicks'], twitter_stats['Avg CTR'], twitter_stats['Avg wEng Rate']],
-        'Linkedin': [linkedin_stats['Total Posts'], linkedin_stats['Total Impressions'], linkedin_stats['Total Engagements'], linkedin_stats['Total Weighted Engagements'], linkedin_stats['Total Link Clicks'], linkedin_stats['Avg CTR'], linkedin_stats['Avg wEng Rate']],
-        'Overall': [total_stats['Total Posts'], total_stats['Total Impressions'], total_stats['Total Engagements'], total_stats['Total Weighted Engagements'], total_stats['Total Link Clicks'], total_stats['Avg CTR'], total_stats['Avg wEng Rate']]
+        'Platform/Metric': ['','Total Posts', 'Total Impressions', 'Total Engagements', 'Total Weighted Engagements', 'Total Link Clicks', 'Avg CTR', 'Avg wEng Rate'],
+        'Facebook': ['Facebook',facebook_stats['Total Posts'], facebook_stats['Total Impressions'], facebook_stats['Total Engagements'], facebook_stats['Total Weighted Engagements'], facebook_stats['Total Link Clicks'], facebook_stats['Avg CTR'], facebook_stats['Avg wEng Rate']],
+        'Twitter': ['Twitter',twitter_stats['Total Posts'], twitter_stats['Total Impressions'], twitter_stats['Total Engagements'], twitter_stats['Total Weighted Engagements'], twitter_stats['Total Link Clicks'], twitter_stats['Avg CTR'], twitter_stats['Avg wEng Rate']],
+        'Linkedin': ['Linkedin',linkedin_stats['Total Posts'], linkedin_stats['Total Impressions'], linkedin_stats['Total Engagements'], linkedin_stats['Total Weighted Engagements'], linkedin_stats['Total Link Clicks'], linkedin_stats['Avg CTR'], linkedin_stats['Avg wEng Rate']],
+        'Overall': ['Overall',total_stats['Total Posts'], total_stats['Total Impressions'], total_stats['Total Engagements'], total_stats['Total Weighted Engagements'], total_stats['Total Link Clicks'], total_stats['Avg CTR'], total_stats['Avg wEng Rate']]
     }).T
  
     # Set the first row as the header
