@@ -60,8 +60,6 @@ if st.session_state.file_uploaded:
 
         # create agent
         agent = create_agent(df)
-        #generate summary of excel
-        xlsummary = process_query("give detailed summary of dataframe in marketing analysis format??", agent)
         
         keypointsqueries = [
             "How many posts were made across each channel respectively and what is the total number of posts ?",
@@ -80,7 +78,7 @@ if st.session_state.file_uploaded:
         for keypointquery in keypointsqueries:
             keypoints.append(process_query(keypointquery, agent))
 
-        st.session_state.doc = generatePDf(results, xlsummary, keypoints)   
+        st.session_state.doc = generatePDf(results, keypoints)   
     doc=st.session_state.doc
     st.download_button("Download PDF", key="button 1", data= doc, file_name="report.pdf", mime="application/pdf")
     pdf_viewer(input= doc.getvalue(), width=700)

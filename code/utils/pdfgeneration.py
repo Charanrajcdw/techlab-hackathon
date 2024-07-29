@@ -52,7 +52,7 @@ class FooterCanvas(canvas.Canvas):
 
         self.restoreState()
 
-def generatePDf(imagebuffersdict, summary, keypoints):
+def generatePDf(imagebuffersdict, keypoints):
     blended_red = HexColor("#cc0000")
     imagesizedict = { "single_bar_chart" : { "height" : 400 , "width": 400 }, "table" : { "height" : 400 , "width": 500 }, "collective_bar_chart" : { "height" : 500 , "width": 500 },  "collective_pie_chart" : { "height" : 500 , "width": 300 } }
     # Content
@@ -135,16 +135,8 @@ def generatePDf(imagebuffersdict, summary, keypoints):
     title = Paragraph(formatted_title, styles['Heading1'])
     elements.append(title)
 
-    # PAGE - 1 :: Excel Summary
-    sub_title = Paragraph("XL Summary", sub_title_red)
-    elements.append(sub_title)
-    paragraph = Paragraph(summary, styles["Normal"])
-    elements.append(paragraph)
-    elements.append(PageBreak())
-
-
-    # PAGE - 2 :: Key points
-    sub_title = Paragraph("Few Key Points", sub_title_red)
+    # PAGE - 1 :: Key points
+    sub_title = Paragraph("Excel Summary", sub_title_red)
     elements.append(sub_title)
     # Adding key points as bullet points with alternating colors
     bullet_points = []
