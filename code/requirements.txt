@@ -14,4 +14,4 @@ textblob
 streamlit_pdf_viewer
 openpyxl
 tabulate
-statsmodels
+seaborn

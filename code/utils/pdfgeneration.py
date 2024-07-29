@@ -1,5 +1,5 @@
 from reportlab.pdfgen import canvas
-from reportlab.platypus import (SimpleDocTemplate, Paragraph, PageBreak, Image, ListFlowable, ListItem, Spacer)
+from reportlab.platypus import (SimpleDocTemplate, Paragraph, PageBreak, Image, ListFlowable, ListItem)
 from reportlab.lib.styles import getSampleStyleSheet,  ParagraphStyle
 from reportlab.lib.pagesizes import LETTER
 from reportlab.lib.utils import ImageReader
@@ -54,7 +54,13 @@ class FooterCanvas(canvas.Canvas):
 
 def generatePDf(imagebuffersdict, keypoints):
     blended_red = HexColor("#cc0000")
-    imagesizedict = { "single_bar_chart" : { "height" : 400 , "width": 400 }, "table" : { "height" : 400 , "width": 500 }, "collective_bar_chart" : { "height" : 500 , "width": 500 },  "collective_pie_chart" : { "height" : 500 , "width": 300 } }
+    imagesizedict = { 
+        "single_bar_chart" : { "height" : 400 , "width": 400 }, 
+        "table" : { "height" : 400 , "width": 500 },
+        "collective_bar_chart" : { "height" : 500 , "width": 500 }, 
+        "correlation_chart" : { "height" : 500 , "width": 500 },
+        "collective_pie_chart" : { "height" : 500 , "width": 300 } 
+    }
     # Content
     styles = getSampleStyleSheet()
     elements = []
@@ -162,6 +168,7 @@ def generatePDf(imagebuffersdict, keypoints):
         elements.append(title)
         # Add an image in the body
         body_image = Image(imagebufferobj.get('img'))
+        print(imagebufferobj.get('chart_type'))
         body_image.drawHeight = imagesizedict.get(imagebufferobj.get('chart_type')).get('height')   # Set image height
         body_image.drawWidth = imagesizedict.get(imagebufferobj.get('chart_type')).get('width')  # Set image width
         elements.append(body_image)

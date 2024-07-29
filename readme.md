@@ -33,7 +33,7 @@ You can access the application online at [https://like-minded-aces.streamlit.app
 - streamlit_pdf_viewer
 - openpyxl
 - tabulate
-- statsmodels
+- seaborn
 
 ## Usage
 
