@@ -57,6 +57,10 @@ if st.session_state.file_uploaded:
         results.append(facebook_analysis(df))
         results.append(twitter_analysis(df))
         results.append(overallStatsTable(df))
+        results.append(length_weng_correlation(df))
+        results.append(label_weng_correlation(df))
+        results.append(length_ctr_correlation(df))
+        results.append(label_ctr_correlation(df))
 
         # create agent
         agent = create_agent(df)
