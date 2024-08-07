@@ -9,10 +9,14 @@ if not st.session_state.file_uploaded:
     st.write("Please upload a XLSX file")
     file = st.file_uploader("Upload xlsx files", type=["xlsx"])
     if file is not None:
-        st.session_state.dataframes = get_df_from_excel(file)
-        st.session_state.file_uploaded = True  
-        createModel(st.session_state.dataframes["posts-20240403T080714-0500"])  
-        st.rerun()                
+        dataframes = get_df_from_excel(file)
+        if dataframes.get("posts-20240403T080714-0500") is not None:
+            st.session_state.dataframes = dataframes
+            st.session_state.file_uploaded = True  
+            createModel(st.session_state.dataframes["posts-20240403T080714-0500"])  
+            st.rerun()        
+        else:
+            st.write("Unsupported file uploaded for marketing analysis, please upload a file with mandatory fields")               
 
 if st.session_state.file_uploaded:
     df = st.session_state.dataframes["posts-20240403T080714-0500"]
@@ -36,7 +40,14 @@ if st.session_state.file_uploaded:
             st.markdown(prompt)
         
         # Process the query and get the response
-        response = process_query(prompt, agent)
+        try:
+            response = process_query(prompt, agent)
+            if response == "[python_repl_ast] is not a valid tool, try one of [python_repl_ast].":
+                raise RuntimeError() 
+        except RuntimeError as e:
+            response = "Oops! Unable to process that query"
+        except Exception as e:
+            response = "Oops! Unable to process that query"
         
         # Display assistant response in chat message container
         with st.chat_message("assistant"):
